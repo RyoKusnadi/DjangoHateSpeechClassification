@@ -1,0 +1,118 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Page User {% endblock %} 
+{% load staticfiles %}
+{% load i18n %}
+{% load account %}
+{% load crispy_forms_tags %}
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    body{
+        background-color: white;
+    }
+    input {
+        border: 1px solid rgb(46, 189, 235);
+        border-radius: 3px;
+        font-size: 1em;
+        outline: none;
+        padding: .2em .4em;
+        width: 60px;
+        text-align: center;
+    }
+    select {
+        vertical-align: middle;
+        line-height: 1;
+        padding: 2px 5px;
+        height: auto;
+        font-size: 25px;
+        margin: 0;
+    }
+    .container{
+        font-size:25px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-2" style="margin-left: 20px; padding: 10px ; border: solid lightblue">
+            <div class="container" >
+                    <p style="color: black; font-size: 20x;font-weight: bold;margin: 0">
+                        Total Messages: {{ chat|length }}
+                    </p>
+                    <p style="color: black; font-size: 19px; margin: 0">
+                             HateSpeech Count :
+                        <b style="color: black;">
+                                {{ HSCount }}
+                        </b>
+                    </p>
+                    <p style="color: black; font-size: 19px;margin: 0">
+                             Non HateSpeech Count :
+                        <b style="color: black;">
+                                {{ NonHSCount }}
+                        </b>
+                    </p>
+                    <br>
+                    <br>
+                    <h5 style="color: black; text-align: center;font-size: 16px;font-weight: bold;margin: 0">
+                        Refresh Every 10 Second
+                    </h5>
+                    <h5 style="color: black; text-align: center;font-size: 16px;font-weight: bold; margin: 0">
+                        Language: Indonesia
+                    </h5>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="container">
+                <div id="chat-body" class="panel panel-default">
+                    <div class="panel-heading" style="color: black;background: lightblue"><p style="margin-left: 10px">HATE SPEECH DETECTOR</p></div>
+                        <p class="text-left" style=" font-weight: bolder">Messages:</p>
+                        <div id="msg-list-div" class="panel-body">
+                            <ul id="msg-list" class="list-group">
+                                {% for obj in chat %}
+                                    <b>{{ obj.user }}</b>
+                                    {% if obj.user == request.user %}
+                                        <li class="text-right list-group-item" style="text-transform: lowercase;">{{ obj.message}}, <b>[{{obj.sentiment}}]</b></li>
+{#                                    {% else %}#}
+{#                                        <li class="text-left list-group-item">{{ obj.message }}</li>#}
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="text-right list-group-item">No messages yet!</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <article>
+                    <header style="text-align: center;"></header>
+                        <section class="experiment" >
+                            <br>
+                            <button id="start-recording">Start</button>
+                            <button id="stop-recording" disabled>Stop</button>
+
+                            <button id="pause-recording" disabled>Pause</button>
+                            <button id="resume-recording" disabled>Resume</button>
+                        </section>
+
+                        <section class="experiment">
+                            <div id="audios-container"></div>
+                        </section>
+                    </article>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    {% include "chat-script.html" %}
+    <script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+    <script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'chat/js/script.js' %}"></script>
+{% endblock javascripts %}
